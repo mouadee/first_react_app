@@ -1,6 +1,12 @@
 import React from 'react';
-import './../App.css'
-function Person(props) {
-    return <h4>I'm a {props.name} and i have {props.age} Yo</h4>;
+import './Person.css'
+const Person = (props) => {
+    return (
+        <div className="Person">
+            <h4 onClick={props.click}>I'm {props.name} and I am {props.age} years old!</h4>
+            <p>{props.children}</p>
+            <input onChange={props.changed} />
+        </div >
+    )
 }
 export default Person
