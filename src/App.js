@@ -5,22 +5,30 @@ import Person from './Person/Person'
 class App extends Component {
   state = {
     persons: [
-      { name: 'Max', age: 23 },
-      { name: 'Manu', age: 27 },
-      { name: 'Stephanie', age: 20 }
-    ]
+      { id: 'ped1', name: 'Max', age: 23 },
+      { id: 'ed2', name: 'Manu', age: 27 },
+      { id: 'spe3', name: 'Stephanie', age: 20 }
+    ],
+    SHOW_PERSON: false
   }
-  switch_name = (new_name) => {
-    this.setState({
-      persons: [
-        { name: new_name, age: 21 },
-        { name: 'Manu', age: 27 },
-        { name: 'Stephanie', age: 24 }
-      ]
-    })
-  }
+  NAME_CHANGE_HANDLER = (event, id) => {
 
-  name_change_handler = (event) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id
+    })
+
+    const person = {
+      ...this.state.persons[personIndex]
+    }
+
+    // const person = Object.assign({}, this.state.persons[personIndex])
+
+    person.name = event.target.value
+
+    const persons = [...this.state.persons]
+
+    persons[personIndex] = person;
+
     this.setState({
       persons: [
         { name: event.target.value, age: 21 },
@@ -30,28 +38,77 @@ class App extends Component {
     })
   }
 
+  TOGGLE_PERSON_HANDLER = () => {
+    const DOES_SHOW = this.state.SHOW_PERSON
+    this.setState({
+      SHOW_PERSON: !DOES_SHOW
+    })
+  }
+
+  DELETE_PERSON = (personIndex) => {
+    const persons = [...this.state.persons]
+    persons.splice(personIndex, 1)
+    this.setState({ persons: persons })
+  }
+
   render() {
+    const buttonStyle = {
+      backgroundColor: 'green',
+      color: 'white',
+      font: 'inherit',
+      border: 'none',
+      padding: '8px',
+      cursor: 'pointer',
+      outline: 'none',
+      borderRadius: '20px',
+      fontSize: '14px',
+      width: '100px',
+      height: '35px'
+    }
+
+    let persons = null;
+
+    if (this.state.SHOW_PERSON) {
+      persons = (
+        <div>
+          {
+            this.state.persons.map((person, index) => {
+              return <Person
+                click={() => this.DELETE_PERSON(index)}
+                name={person.name}
+                age={person.age}
+                key={person.id}
+                changed={(event) => this.NAME_CHANGE_HANDLER(event, person.id)}
+              />
+            })
+          }
+        </div>
+      );
+      buttonStyle.backgroundColor = 'red'
+    }
+
+
+    const classes = [];
+
+    if (this.state.persons.length <= 2) {
+      classes.push('red')
+    }
+    if (this.state.persons.length <= 1) {
+      classes.push('bold')
+    }
+
     return (
       <div className="App" >
-        <h1>Hi Algorithm</h1>
-        <p>This is a const arguments</p>
-        <button onClick={this.switch_name.bind(this, 'Maximillian')}>Switch name</button>
-        <Person
-          name={this.state.persons[0].name}
-          age={this.state.persons[0].age} />
-        <Person
-          name={this.state.persons[1].name}
-          age={this.state.persons[1].age}
-          click={this.switch_name.bind(this, 'Max!')}
-          changed={this.name_change_handler}
-        >
-          My Hobbies is Racing
-        </Person>
-        <Person
-          name={this.state.persons[2].name}
-          age={this.state.persons[2].age} />
+        <h1>Hi I'm a ReactJs App</h1>
+        <p className={classes.join(' ')}>This is a const arguments</p>
+        <button
+          style={buttonStyle}
+          onClick={this.TOGGLE_PERSON_HANDLER}>
+          HANDLER
+        </button>
+        {persons}
       </div>
     )
   }
 }
-export default App
+export default Radium(App)
